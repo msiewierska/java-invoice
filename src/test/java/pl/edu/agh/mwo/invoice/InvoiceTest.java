@@ -13,12 +13,27 @@ import pl.edu.agh.mwo.invoice.product.OtherProduct;
 import pl.edu.agh.mwo.invoice.product.Product;
 import pl.edu.agh.mwo.invoice.product.TaxFreeProduct;
 
+import static org.hamcrest.CoreMatchers.containsString;
+
 public class InvoiceTest {
     private Invoice invoice;
+    private Invoice invoice2;
 
     @Before
     public void createEmptyInvoiceForTheTest() {
         invoice = new Invoice();
+    }
+
+    @Before
+    public void createEmptyInvoice2ForTheTest() {
+        invoice2 = new Invoice();
+    }
+
+    @Test
+    public void testEmptyInvoiceHasNumber() {
+        Assert.assertTrue(invoice.getInvoiceNumber() > 0);
+        Assert.assertEquals(1, invoice.getInvoiceNumber());
+        Assert.assertEquals(2, invoice2.getInvoiceNumber());
     }
 
     @Test
@@ -43,6 +58,18 @@ public class InvoiceTest {
         invoice.addProduct(onions);
         invoice.addProduct(apples);
         Assert.assertThat(new BigDecimal("20"), Matchers.comparesEqualTo(invoice.getNetTotal()));
+    }
+
+    @Test
+    public void testInvoicePrintWithTwoDifferentProducts() {
+        Product onions = new TaxFreeProduct("Warzywa", new BigDecimal("10"));
+        Product apples = new TaxFreeProduct("Owoce", new BigDecimal("10"));
+        invoice.addProduct(onions);
+        invoice.addProduct(apples);
+        Assert.assertThat(invoice.getPrint(), containsString("Invoice number"));
+        Assert.assertThat(invoice.getPrint(), containsString("Warzywa"));
+        Assert.assertThat(invoice.getPrint(), containsString("Owoce"));
+        Assert.assertThat(invoice.getPrint(), containsString("Liczba pozycji: " + invoice.getProducts().size()));
     }
 
     @Test
@@ -76,6 +103,22 @@ public class InvoiceTest {
         // tax: 2.30
         invoice.addProduct(new OtherProduct("Piwko", new BigDecimal("10")));
         Assert.assertThat(new BigDecimal("10.30"), Matchers.comparesEqualTo(invoice.getTaxTotal()));
+    }
+
+    @Test
+    public void testInvoicePrintForManyProduct() {
+        Product pampersy = new TaxFreeProduct("Pampersy", new BigDecimal("200"));
+        invoice.addProduct(pampersy);
+        Product kefir = new DairyProduct("Kefir", new BigDecimal("100"));
+        invoice.addProduct(kefir);
+        // tax: 2.30
+        invoice.addProduct(new OtherProduct("Piwko", new BigDecimal("10")));
+        Assert.assertThat(invoice.getPrint(), containsString("Invoice number"));
+        Assert.assertThat(invoice.getPrint(), containsString("Pampersy"));
+        Assert.assertThat(invoice.getPrint(), containsString("qty:" + invoice.getProducts().get(pampersy)));
+        Assert.assertThat(invoice.getPrint(), containsString("Kefir"));
+        Assert.assertThat(invoice.getPrint(), containsString("qty:" + invoice.getProducts().get(kefir)));
+        Assert.assertThat(invoice.getPrint(), containsString("Liczba pozycji: " + invoice.getProducts().size()));
     }
 
     @Test
