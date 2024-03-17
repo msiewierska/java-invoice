@@ -8,7 +8,8 @@ import org.junit.Test;
 
 import pl.edu.agh.mwo.invoice.product.Product;
 
-public class ProductTest {
+public class
+ProductTest {
     @Test
     public void testProductNameIsCorrect() {
         Product product = new OtherProduct("buty", new BigDecimal("100.0"));
