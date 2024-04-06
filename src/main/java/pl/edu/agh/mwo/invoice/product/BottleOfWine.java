@@ -7,7 +7,7 @@ public class BottleOfWine extends Product {
 
     private final BigDecimal akcyza;
 
-    public BottleOfWine(String name, BigDecimal price,BigDecimal tax) {
+    public BottleOfWine(String name, BigDecimal price, BigDecimal tax) {
 
         super(name, price, tax);
 

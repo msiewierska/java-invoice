@@ -29,7 +29,9 @@ public class Invoice {
             throw new IllegalArgumentException();
         }
 
-        Product productThatAlreadyExists = products.keySet().stream().filter(key -> key.getName().equals(product.getName())).findFirst().orElse(null) ;
+        Product productThatAlreadyExists = products.keySet()
+                .stream().filter(key -> key.getName().equals(product.getName()))
+                .findFirst().orElse(null);
 
         if (productThatAlreadyExists != null) {
             int qty = products.get(productThatAlreadyExists);
@@ -78,8 +80,7 @@ public class Invoice {
         return print;
     }
 
-    public Map<Product, Integer> getProducts
-            () {
+    public Map<Product, Integer> getProducts() {
         return products;
     }
 }
