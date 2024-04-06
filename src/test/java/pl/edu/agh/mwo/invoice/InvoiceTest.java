@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pl.edu.agh.mwo.invoice.Invoice;
@@ -14,22 +15,30 @@ import static org.hamcrest.CoreMatchers.containsString;
 
 public class InvoiceTest {
     private Invoice invoice;
-    private Invoice invoice2;
+
+    private static Invoice invoice1;
+
+    private static Invoice invoice2;
+
+    @BeforeClass
+    public static void createEmptyInvoice1ForTheTest() {
+        invoice1 = new Invoice();
+    }
+
+    @BeforeClass
+    public static void createEmptyInvoice2ForTheTest() {
+        invoice2 = new Invoice();
+    }
 
     @Before
     public void createEmptyInvoiceForTheTest() {
         invoice = new Invoice();
     }
 
-    @Before
-    public void createEmptyInvoice2ForTheTest() {
-        invoice2 = new Invoice();
-    }
-
     @Test
     public void testEmptyInvoiceHasNumber() {
         Assert.assertTrue(invoice.getInvoiceNumber() > 0);
-        Assert.assertEquals(1, invoice.getInvoiceNumber());
+        Assert.assertEquals(1, invoice1.getInvoiceNumber());
         Assert.assertEquals(2, invoice2.getInvoiceNumber());
     }
 
