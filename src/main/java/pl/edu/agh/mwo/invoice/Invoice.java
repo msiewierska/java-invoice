@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import pl.edu.agh.mwo.invoice.product.BottleOfWine;
+import pl.edu.agh.mwo.invoice.product.DairyProduct;
+import pl.edu.agh.mwo.invoice.product.OtherProduct;
 import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
@@ -25,7 +28,15 @@ public class Invoice {
         if (product == null || quantity <= 0) {
             throw new IllegalArgumentException();
         }
-        products.put(product, quantity);
+
+        Product productThatAlreadyExists = products.keySet().stream().filter(key -> key.getName().equals(product.getName())).findFirst().orElse(null) ;
+
+        if (productThatAlreadyExists != null) {
+            int qty = products.get(productThatAlreadyExists);
+            products.put(productThatAlreadyExists, qty + quantity);
+        } else {
+            products.put(product, quantity);
+        }
     }
 
     public BigDecimal getNetTotal() {

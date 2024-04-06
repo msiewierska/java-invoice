@@ -8,10 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pl.edu.agh.mwo.invoice.Invoice;
-import pl.edu.agh.mwo.invoice.product.DairyProduct;
-import pl.edu.agh.mwo.invoice.product.OtherProduct;
-import pl.edu.agh.mwo.invoice.product.Product;
-import pl.edu.agh.mwo.invoice.product.TaxFreeProduct;
+import pl.edu.agh.mwo.invoice.product.*;
 
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -133,7 +130,7 @@ public class InvoiceTest {
     }
 
     @Test
-    public void testInvoiceHasPropoerSubtotalWithQuantityMoreThanOne() {
+    public void testInvoiceHasProperSubtotalWithQuantityMoreThanOne() {
         // 2x kubek - price: 10
         invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5")), 2);
         // 3x kozi serek - price: 30
@@ -144,7 +141,7 @@ public class InvoiceTest {
     }
 
     @Test
-    public void testInvoiceHasPropoerTotalWithQuantityMoreThanOne() {
+    public void testInvoiceHasProperTotalWithQuantityMoreThanOne() {
         // 2x chleb - price with tax: 10
         invoice.addProduct(new TaxFreeProduct("Chleb", new BigDecimal("5")), 2);
         // 3x chedar - price with tax: 32.40
@@ -152,6 +149,18 @@ public class InvoiceTest {
         // 1000x pinezka - price with tax: 12.30
         invoice.addProduct(new OtherProduct("Pinezka", new BigDecimal("0.01")), 1000);
         Assert.assertThat(new BigDecimal("54.70"), Matchers.comparesEqualTo(invoice.getGrossTotal()));
+    }
+
+    @Test
+    public void testInvoiceWithWine() {
+        invoice.addProduct(new BottleOfWine("Wine", new BigDecimal("27.70"), new BigDecimal("0.23")), 1);
+        Assert.assertThat(new BigDecimal("39.631"), Matchers.comparesEqualTo(invoice.getGrossTotal()));
+    }
+
+    @Test
+    public void testInvoiceWithFuelCanister() {
+        invoice.addProduct(new FuelCanister("FuelCanister", new BigDecimal("30")), 1);
+        Assert.assertThat(new BigDecimal("35.56"), Matchers.comparesEqualTo(invoice.getGrossTotal()));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -167,5 +176,16 @@ public class InvoiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void testAddingNullProduct() {
         invoice.addProduct(null);
+    }
+
+    @Test
+    public void testDuplicateProduct() {
+        Product maslo1 = new DairyProduct("Maslo", new BigDecimal("7.70"));
+        Product maslo2 = new DairyProduct("Maslo", new BigDecimal("7.70"));
+        invoice.addProduct(new OtherProduct("Chipsy", new BigDecimal("11")));
+        invoice.addProduct(maslo1);
+        invoice.addProduct(maslo2);
+
+        Assert.assertThat(2, Matchers.comparesEqualTo(invoice.getProducts().get(maslo1)));
     }
 }
